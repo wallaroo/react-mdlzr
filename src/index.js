@@ -12,6 +12,7 @@ export default function mdlzr(propsbinding: PropsBinder | PropsBinding): Compone
         return class Mdlzr extends Component<any>{
             static displayName = `Mdlzr(${Component.displayName || Component.name})`;
             state = {};
+            _subscriptions = {};
             getPropsBinding(props):PropsBinding{
                 if (typeof propsbinding === "function"){
                     return propsbinding(props)
@@ -19,21 +20,36 @@ export default function mdlzr(propsbinding: PropsBinder | PropsBinding): Compone
                     return propsbinding;
                 }
             }
+            _subscribe(propName:string, propValue){
+                this._subscriptions[propName] = propValue.observe((obj)=>{
+                    if (obj !== this.state[propName]){
+                        this.setState({[propName]:obj});
+                    }
+                })
+            }
             componentWillMount(){
                 const propsBinding = this.getPropsBinding(this.props);
-                for(const propName in propsBinding){
-                    const objectToObserve = propsBinding[propName];
-                    //TODO observe
+                for(const propName of Object.keys(propsBinding)){
+                    this._subscribe(propName, propsBinding[propName])
                 }
             }
-            componentWillReceiveProps(next){
-                //TODO unsubscibe eventually changed observables
+            componentWillReceiveProps(nextProps){
+                const propsBinding = this.getPropsBinding(this.props);
+                nextProps = this.getPropsBinding(nextProps);
+                for(const propName of Object.keys(propsBinding)){
+                    if (this.props[propName] !== nextProps[propName]) {
+                        this._subscriptions[propName] && this._subscriptions[propName].unsubscribe();
+                        this._subscribe(propName, propsBinding[propName]);
+                    }
+                }
             }
             componentWillUnmount(){
-                //TODO unsubscribe all
+                for(const propName of Object.keys(this._subscriptions)){
+                    this._subscriptions[propName].unsubscribe();
+                }
             }
             render(){
-                return <Component {...this.props}/>
+                return <Component {...this.props} {...this.state}/>
             }
         }
     }

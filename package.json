@@ -5,6 +5,10 @@
   "main": "lib/index.js",
   "module": "es/index.js",
   "jsnext:main": "src/index.js",
+  "files": [
+    "es/",
+    "src/"
+  ],
   "scripts": {
     "test": "jest",
     "flow": "flow",
@@ -21,8 +25,6 @@
   },
   "homepage": "https://github.com/wallaroo/react-mdlzr#readme",
   "devDependencies": {
-    "react": "^16.1.1",
-    "react-dom": "^16.1.1",
     "babel-cli": "^6.26.0",
     "babel-jest": "^21.2.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
@@ -31,9 +33,12 @@
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-flow": "^6.23.0",
+    "babel-preset-react": "^6.24.1",
     "flow-bin": "^0.57.3",
     "jest": "^21.2.1",
-    "mdlzr": "^0.1.0"
+    "mdlzr": "^0.1.0",
+    "react": "^16.1.1",
+    "react-dom": "^16.1.1"
   },
   "peerDependencies": {
     "react": "16.x.x|15.x.x",

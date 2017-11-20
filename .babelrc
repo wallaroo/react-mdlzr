@@ -12,6 +12,7 @@
             }
           }
         ],
+        "react",
         "flow"
       ],
       "plugins": [
@@ -34,6 +35,7 @@
             "modules":false
           }
         ],
+        "react",
         "flow"
       ],
       "plugins": [
