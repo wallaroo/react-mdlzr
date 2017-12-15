@@ -1,21 +1,23 @@
 //@flow
-import React, {Component} from "react";
+import React from "react";
 import type {ComponentType} from "react";
 import type {Query, Collection, Model} from "mdlzr";
+import pick from "lodash.pick";
 
 type PropsBinding = { [string]: Query | Collection | Model }
 type PropsBinder = { [string]: any } => PropsBinding
 
-export default function mdlzr(propsbinding: PropsBinder | PropsBinding): ComponentType<any> => ComponentType<any> {
-    return function (Component: ComponentType<any>): ComponentType<any> {
-        //$FlowFixMe
-        return class Mdlzr extends Component<any>{
-            static displayName = `Mdlzr(${Component.displayName || Component.name})`;
+export default function mdlzr <Props:{}>(propsbinding: PropsBinder | PropsBinding | string[]): ComponentType<Props> => ComponentType<Props> {
+    return function (InputComponent: ComponentType<Props>): ComponentType<Props> {
+        return class Mdlzr extends React.Component<Props,*>{
+            static displayName = `Mdlzr(${InputComponent.displayName || InputComponent.name})`;
             state = {};
             _subscriptions = {};
             getPropsBinding(props):PropsBinding{
                 if (typeof propsbinding === "function"){
                     return propsbinding(props)
+                }else if (Array.isArray(propsbinding)){
+                    return pick(props, propsbinding);
                 }else{
                     return propsbinding;
                 }
@@ -49,7 +51,7 @@ export default function mdlzr(propsbinding: PropsBinder | PropsBinding): Compone
                 }
             }
             render(){
-                return <Component {...this.props} {...this.state}/>
+                return <InputComponent {...this.props} {...this.state}/>
             }
         }
     }
